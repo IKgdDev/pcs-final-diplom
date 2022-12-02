@@ -4,7 +4,7 @@ import java.net.Socket;
 public class Client {
     private static final String HOST = "localhost";
     private static final int PORT = 8989;
-    private static final String REQUEST = "мрмрмо";
+    private static final String REQUEST = "навыки абстракция";
     private static final String FILE = "reply.json";
 
     public static void main(String[] args) throws IOException {
