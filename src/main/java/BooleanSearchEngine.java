@@ -3,8 +3,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.sql.ClientInfoStatus;
 import java.util.*;
 
@@ -51,13 +50,28 @@ public class BooleanSearchEngine implements SearchEngine {
     @Override
     public List<PageEntry> search(String line) {
 
+        Set<String> stopWords = new TreeSet<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader("stop-ru.txt"))) {
+            String word;
+            while ((word = br.readLine()) != null) {
+                stopWords.add(word);
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         String[] words = line.toLowerCase().split(" ");
 
         List<PageEntry> listEntries = new ArrayList<>();
 
         for (String word : words) {
-            if (wordsMap.get(word) != null) {
-                listEntries.addAll(wordsMap.get(word));
+            if (!stopWords.contains(word)) {
+                if (wordsMap.get(word) != null) {
+                    listEntries.addAll(wordsMap.get(word));
+                }
             }
         }
 
@@ -74,10 +88,8 @@ public class BooleanSearchEngine implements SearchEngine {
         }
 
         List<PageEntry> resultList = new ArrayList<>(mapEntries.values());
+        Collections.sort(resultList);
 
-        if (resultList != null) {
-            Collections.sort(resultList);
-        }
         return resultList;
     }
 }
