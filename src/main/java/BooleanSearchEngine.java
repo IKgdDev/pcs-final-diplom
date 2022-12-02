@@ -50,7 +50,9 @@ public class BooleanSearchEngine implements SearchEngine {
     @Override
     public List<PageEntry> search(String word) {
         List<PageEntry> result = wordsMap.get(word);
-        Collections.sort(result);
+        if (result != null) {
+            Collections.sort(result);
+        }
         return result;
     }
 }

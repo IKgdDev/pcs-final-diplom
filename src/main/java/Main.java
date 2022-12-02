@@ -7,7 +7,6 @@ import java.net.Socket;
 import java.util.Arrays;
 
 public class Main {
-
     private static final int PORT = 8989;
 
     public static void main(String[] args) throws Exception {
@@ -22,7 +21,8 @@ public class Main {
                         PrintWriter out = new PrintWriter(socket.getOutputStream());
                 ) {
                     String request = in.readLine();
-                    out.println(gson.toJson(engine.search(request)));
+                    String reply = gson.toJson(engine.search(request));
+                    out.println(reply);
                 }
             }
         } catch (IOException e) {
