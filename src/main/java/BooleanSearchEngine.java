@@ -5,6 +5,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.ClientInfoStatus;
 import java.util.*;
 
 public class BooleanSearchEngine implements SearchEngine {
@@ -48,11 +49,35 @@ public class BooleanSearchEngine implements SearchEngine {
 
 
     @Override
-    public List<PageEntry> search(String word) {
-        List<PageEntry> result = wordsMap.get(word);
-        if (result != null) {
-            Collections.sort(result);
+    public List<PageEntry> search(String line) {
+
+        String[] words = line.toLowerCase().split(" ");
+
+        List<PageEntry> listEntries = new ArrayList<>();
+
+        for (String word : words) {
+            if (wordsMap.get(word) != null) {
+                listEntries.addAll(wordsMap.get(word));
+            }
         }
-        return result;
+
+        Map<String, PageEntry> mapEntries = new HashMap<>();
+
+        for (PageEntry pageEntry : listEntries) {
+            String key = pageEntry.getPdfName() + ", " + pageEntry.getPage();
+            if (!mapEntries.containsKey(key)) {
+                mapEntries.put(key, pageEntry);
+            } else {
+                int count = mapEntries.get(key).getCount();
+                mapEntries.put(key, new PageEntry(pageEntry.getPdfName(), pageEntry.getPage(), pageEntry.getCount() + count));
+            }
+        }
+
+        List<PageEntry> resultList = new ArrayList<>(mapEntries.values());
+
+        if (resultList != null) {
+            Collections.sort(resultList);
+        }
+        return resultList;
     }
 }
